@@ -16,9 +16,10 @@ jobs:
 
       - name: Setup Node
         uses: actions/setup-node@v4
-
+        with:
+          node-version: 18
       - name: Install dependencies
-        uses: yarn install
+        uses: yarn
 
       - name: Build project
         run: yarn run build

@@ -12,19 +12,36 @@ jobs:
     - name: checkout
       uses: actions/checkout@v4
 
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js
       uses: actions/setup-node@v4
       with:
         node-version: 18.x
         cache: 'npm'
-        
+    - name: Install dependencies
+      uses: bahmutov/npm-install@v1
+
     - name: Build
-      run: |
-        npm install
-        npm run build
-    - name: Depoly
-      uses: JamesIves/github-pages-deploy-action@v4.7.3
+      run: npm run build
+
+    - name: Upload production-ready build files
+      uses: actions/upload-artifact@v4
       with:
-        ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        BRANCH: gh-pages
-        FOLDER: /dist
+        name: production-files
+        path: ./dist
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+    - name: Download artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: production-files
+        path: ./dist
+    - name: Depoly to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.ACCESS_TOKEN }}
+        publish_dir: ./dist

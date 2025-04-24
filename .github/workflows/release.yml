@@ -21,7 +21,7 @@ jobs:
         uses: bahmutov/npm-install@v1
 
       - name: Install Vite
-        run: npm install -g vite
+        run: npm install vite
 
       - name: Build project
         run: npm run build
